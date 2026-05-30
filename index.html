@@ -1,33 +1,449 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Champions Fitness</title>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Champions Fitness - Nagaraj Edition</title>
+
 <style>
-body{background:#111;color:white;font-family:Arial;padding:20px}
-.card{background:#222;padding:15px;border-radius:10px;margin:10px 0}
-h1{color:gold}
-button{padding:10px}
+
+body{
+background:#0d0d0d;
+font-family:Arial,sans-serif;
+color:white;
+margin:0;
+padding:15px;
+}
+
+.header{
+text-align:center;
+padding:20px;
+}
+
+h1{
+color:#FFD700;
+margin:0;
+}
+
+.subtitle{
+color:#ccc;
+font-size:14px;
+}
+
+.card{
+background:#1b1b1b;
+border-radius:15px;
+padding:15px;
+margin-bottom:15px;
+}
+
+.card h2{
+color:#FFD700;
+margin-top:0;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:10px;
+border:none;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#FFD700;
+border:none;
+border-radius:10px;
+font-weight:bold;
+font-size:16px;
+}
+
+.exercise{
+display:flex;
+justify-content:space-between;
+padding:10px 0;
+border-bottom:1px solid #333;
+}
+
+.tabtitle{
+color:#FFD700;
+font-size:20px;
+margin-bottom:10px;
+}
+
 </style>
 </head>
+
 <body>
 
+<div class="header">
 <h1>🏆 Champions Fitness</h1>
-
-<div class="card">
-<h2>Today's Workout</h2>
-<label><input type="checkbox"> Workout Completed</label><br><br>
-<label><input type="checkbox"> Protein 150g+</label><br><br>
-<label><input type="checkbox"> Water 4 Litres</label><br><br>
-<label><input type="checkbox"> Sleep 8 Hours</label>
+<div class="subtitle">
+Nagaraj Edition
+</div>
 </div>
 
 <div class="card">
+
 <h2>Body Stats</h2>
-Weight: <input type="number"><br><br>
-Waist: <input type="number"><br><br>
-Shoulders: <input type="number">
+
+Weight (kg)
+<input id="weight">
+
+Waist (inch)
+<input id="waist">
+
+Shoulders (inch)
+<input id="shoulders">
+
 </div>
+
+<div class="card">
+
+<h2>Daily Targets</h2>
+
+<label>
+<input type="checkbox" id="protein">
+Protein 150g+
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox" id="water">
+Water 4 Litres
+</label>
+
+<br><br>
+
+<label>
+<input type="checkbox" id="sleep">
+Sleep 8 Hours
+</label>
+
+</div>
+<div class="card">
+
+<h2>Monday – Chest + Side Delts</h2>
+
+<div class="exercise">
+<span>Bench Press</span>
+<input type="checkbox" id="benchdone">
+</div>
+
+Weight Used
+<input id="benchweight">
+
+Reps
+<input id="benchreps">
+
+<div class="exercise">
+<span>Incline Dumbbell Press</span>
+<input type="checkbox" id="inclinedone">
+</div>
+
+Weight Used
+<input id="inclineweight">
+
+Reps
+<input id="inclinereps">
+
+<div class="exercise">
+<span>Chest Fly</span>
+<input type="checkbox" id="flydone">
+</div>
+
+Weight Used
+<input id="flyweight">
+
+Reps
+<input id="flyreps">
+
+<div class="exercise">
+<span>Dumbbell Lateral Raise</span>
+<input type="checkbox" id="lateraldone">
+</div>
+
+Weight Used
+<input id="lateralweight">
+
+Reps
+<input id="lateralreps">
+
+<div class="exercise">
+<span>Cable Lateral Raise</span>
+<input type="checkbox" id="cabledone">
+</div>
+
+Weight Used
+<input id="cableweight">
+
+Reps
+<input id="cablereps">
+
+</div>
+
+<div class="card">
+
+<h2>Weekly Progress</h2>
+
+<p id="progressText">
+Workouts Completed: 0%
+</p>
+
+<button onclick="saveData()">
+Save Progress
+</button>
+
+</div>
+
+<script>
+
+function saveData(){
+
+let data={};
+
+document.querySelectorAll("input").forEach(el=>{
+
+if(el.type==="checkbox"){
+data[el.id]=el.checked;
+}else{
+data[el.id]=el.value;
+}
+
+});
+
+localStorage.setItem(
+"championsFitness",
+JSON.stringify(data)
+);
+
+alert("Progress Saved!");
+
+}
+
+window.onload=function(){
+
+let data=JSON.parse(
+localStorage.getItem("championsFitness")||"{}"
+);
+
+document.querySelectorAll("input").forEach(el=>{
+
+if(data[el.id]!==undefined){
+
+if(el.type==="checkbox"){
+el.checked=data[el.id];
+}else{
+el.value=data[el.id];
+}
+
+}
+
+});
+
+}
+
+</script>
+<div class="card">
+
+<h2>Tuesday – Lats + Biceps</h2>
+
+<label><input type="checkbox" id="pullup"> Pull-Ups</label><br><br>
+<label><input type="checkbox" id="latpd"> Lat Pulldown</label><br><br>
+<label><input type="checkbox" id="row"> Cable Row</label><br><br>
+<label><input type="checkbox" id="curl"> Barbell Curl</label><br><br>
+<label><input type="checkbox" id="hammer"> Hammer Curl</label>
+
+</div>
+
+<div class="card">
+
+<h2>Wednesday – Legs</h2>
+
+<label><input type="checkbox" id="squatdone"> Squat</label><br><br>
+Weight
+<input id="squatweight">
+
+Reps
+<input id="squatreps">
+
+<label><input type="checkbox" id="legpressdone"> Leg Press</label><br><br>
+Weight
+<input id="legpressweight">
+
+Reps
+<input id="legpressreps">
+
+<label><input type="checkbox" id="rdldone"> Romanian Deadlift</label><br><br>
+Weight
+<input id="rdlweight">
+
+Reps
+<input id="rdlreps">
+
+</div>
+
+<div class="card">
+
+<h2>Personal Records (PR)</h2>
+
+Bench Press PR
+<input id="benchpr">
+
+Squat PR
+<input id="squatpr">
+
+Leg Press PR
+<input id="legpresspr">
+
+Shoulder Press PR
+<input id="shoulderpr">
+
+</div>
+
+<div class="card">
+
+<h2>Side Delt Tracker</h2>
+
+Current Shoulder Measurement
+<input id="shouldermeasure">
+
+Target Shoulder Measurement
+<input id="shouldertarget">
+
+<label>
+<input type="checkbox" id="deltsession">
+Side Delt Workout Completed
+</label>
+
+</div>
+  <div class="card">
+
+<h2>Thursday – Chest + Shoulders</h2>
+
+<label><input type="checkbox" id="thu1"> Incline Barbell Press</label><br><br>
+<label><input type="checkbox" id="thu2"> Dumbbell Press</label><br><br>
+<label><input type="checkbox" id="thu3"> Shoulder Press</label><br><br>
+<label><input type="checkbox" id="thu4"> Lateral Raise</label><br><br>
+<label><input type="checkbox" id="thu5"> Face Pull</label>
+
+</div>
+
+<div class="card">
+
+<h2>Friday – Lats + Arms</h2>
+
+<label><input type="checkbox" id="fri1"> Pull-Ups</label><br><br>
+<label><input type="checkbox" id="fri2"> Close Grip Pulldown</label><br><br>
+<label><input type="checkbox" id="fri3"> Chest Supported Row</label><br><br>
+<label><input type="checkbox" id="fri4"> Barbell Curl</label><br><br>
+<label><input type="checkbox" id="fri5"> Skull Crushers</label>
+
+</div>
+
+<div class="card">
+
+<h2>Saturday – Legs + Side Delts</h2>
+
+<label><input type="checkbox" id="sat1"> Front Squat</label><br><br>
+<label><input type="checkbox" id="sat2"> Leg Press</label><br><br>
+<label><input type="checkbox" id="sat3"> Leg Curl</label><br><br>
+<label><input type="checkbox" id="sat4"> Dumbbell Lateral Raise</label><br><br>
+<label><input type="checkbox" id="sat5"> Cable Lateral Raise</label>
+
+</div>
+
+<div class="card">
+
+<h2>🏆 Progress Dashboard</h2>
+
+<p>
+Current Goal:
+<br>
+✔ Waist 34 → 32 inches
+<br>
+✔ Bigger Side Delts
+<br>
+✔ Wider Lats
+<br>
+✔ Maintain Strength
+</p>
+
+<p id="completion">
+Weekly Completion: Track Manually
+</p>
+
+</div>
+
+<div class="card">
+
+<h2>Champion Notes</h2>
+
+<textarea id="notes"
+style="
+width:100%;
+height:120px;
+border-radius:10px;
+padding:10px;
+"></textarea>
+
+</div>
+
+<script>
+
+document.querySelectorAll("input,textarea").forEach(el=>{
+
+el.addEventListener("change",()=>{
+
+let data={};
+
+document
+.querySelectorAll("input,textarea")
+.forEach(x=>{
+
+if(x.type==="checkbox"){
+data[x.id]=x.checked;
+}else{
+data[x.id]=x.value;
+}
+
+});
+
+localStorage.setItem(
+"championsFitnessV2",
+JSON.stringify(data)
+);
+
+});
+
+});
+
+let saved=JSON.parse(
+localStorage.getItem("championsFitnessV2")||"{}"
+);
+
+document
+.querySelectorAll("input,textarea")
+.forEach(x=>{
+
+if(saved[x.id]!==undefined){
+
+if(x.type==="checkbox"){
+x.checked=saved[x.id];
+}else{
+x.value=saved[x.id];
+}
+
+}
+
+});
+
+</script>
 
 </body>
 </html>
