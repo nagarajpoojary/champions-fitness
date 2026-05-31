@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N Fitness 1.0</title>
+<style>
+body{background:#0d0d0d;color:#fff;font-family:Arial;padding:15px}
+.card{background:#1b1b1b;padding:15px;border-radius:15px;margin-bottom:15px}
+h1,h2{color:#FFD700}
+input,textarea{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;box-sizing:border-box}
+button{width:100%;padding:12px;background:#FFD700;border:none;border-radius:10px;margin-top:5px}
+.progress{background:#333;height:20px;border-radius:10px;overflow:hidden}
+.bar{background:#FFD700;height:20px;width:0%}
+.timer{font-size:34px;text-align:center;color:#FFD700}
+.badge{display:inline-block;background:#333;padding:8px 12px;border-radius:20px;margin:4px}
+canvas{background:#fff;border-radius:10px;width:100%;max-width:100%}
+.footer{text-align:center;color:#ccc}
+</style>
+</head>
+<body>
+
+<h1>🏆 Champions Fitness V7.1</h1>
+<p style="color:#FFD700;text-align:center;">
+Developed by Nagaraj's IT Solution
+</p>
+
+<div class="card">
+<h2>🔥 Champion Dashboard</h2>
+<input id="weight" placeholder="Weight (kg)">
+<input id="waist" placeholder="Waist (inch)">
+<input id="shoulders" placeholder="Shoulders (inch)">
+<input id="xp" placeholder="XP Points">
+<button onclick="saveData()">Save Progress</button>
+<p id="level">Level 1 Champion</p>
+</div>
+
+<div class="card">
+<h2>💧 Water Tracker</h2>
+<input id="water" type="number" placeholder="Litres">
+<div class="progress"><div id="waterBar" class="bar"></div></div>
+</div>
+
+<div class="card">
+<h2>🍗 Protein Tracker</h2>
+<input id="protein" type="number" placeholder="Protein (g)">
+<div class="progress"><div id="proteinBar" class="bar"></div></div>
+</div>
+
+<div class="card">
+<h2>⏱ Smart Workout Timer</h2>
+<div class="timer" id="timer">00:00</div>
+<input id="seconds" type="number" value="60">
+<button onclick="startTimer()">Start Set</button>
+<button onclick="startRest()">90s Rest</button>
+<button onclick="stopTimer()">Stop</button>
+</div>
+
+<div class="card">
+<h2>📈 Weight Progress Chart</h2>
+<canvas id="chart" width="300" height="150"></canvas>
+<button onclick="addWeight()">Add Weight Entry</button>
+</div>
+
+<div class="card">
+<h2>📸 Transformation Photos</h2>
+<input type="file" id="photo" accept="image/*">
+<img id="preview" style="max-width:100%;display:none;border-radius:10px;">
+</div>
+
+<div class="card">
+<h2>🔥 Streak Tracker</h2>
+<p id="streakText">Current Streak: 0 Days</p>
+<button onclick="increaseStreak()">Workout Completed Today</button>
+</div>
+
+<div class="card">
+<h2>🏅 Achievements</h2>
+<div class="badge">🔥 Consistency</div>
+<div class="badge">💪 Strength</div>
+<div class="badge">🦵 Leg Hero</div>
+<div class="badge">🏆 Champion</div>
+</div>
+
+<div class="card footer">
+<h2>💻 Nagaraj's IT Solution</h2>
+<p>Custom Software • Fitness Apps • Healthcare Innovation</p>
+<p>📧 nagarajpoojary@live.com</p>
+<p style="color:#FFD700;">Powered by Nagaraj's IT Solution</p>
+</div>
+
+<script>
+let interval;
+function updateBars(){
+waterBar.style.width=Math.min((water.value||0)/4*100,100)+'%';
+proteinBar.style.width=Math.min((protein.value||0)/150*100,100)+'%';
+level.innerText='Level '+(Math.floor((xp.value||0)/1000)+1)+' Champion';
+}
+document.addEventListener('input',updateBars);
+function beep(){
+try{
+const c=new(window.AudioContext||window.webkitAudioContext)();
+const o=c.createOscillator();o.connect(c.destination);o.start();
+setTimeout(()=>o.stop(),700);
+if(navigator.vibrate) navigator.vibrate([300,200,300]);
+}catch(e){}
+}
+function run(sec){
+clearInterval(interval);
+interval=setInterval(()=>{
+let m=Math.floor(sec/60),s=sec%60;
+timer.innerText=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+sec--;
+if(sec<0){clearInterval(interval);beep();alert('⏰ Resume Workout!');}
+},1000);
+}
+function startTimer(){run(parseInt(seconds.value)||60);}
+function startRest(){run(90);}
+function stopTimer(){clearInterval(interval);}
+function saveData(){
+localStorage.setItem('CFV71',JSON.stringify({
+weight:weight.value,waist:waist.value,shoulders:shoulders.value,xp:xp.value,water:water.value,protein:protein.value
+}));
+alert('Saved');
+}
+window.onload=function(){
+let d=JSON.parse(localStorage.getItem('CFV71')||'{}');
+for(let k in d){if(document.getElementById(k)) document.getElementById(k).value=d[k];}
+updateBars();
+}
+</script>
+
+</body>
+</html>

@@ -2,133 +2,197 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>N Fitness 1.0</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>N Fitness 1.6 Ultimate</title>
 <style>
-body{background:#0d0d0d;color:#fff;font-family:Arial;padding:15px}
-.card{background:#1b1b1b;padding:15px;border-radius:15px;margin-bottom:15px}
-h1,h2{color:#FFD700}
-input,textarea{width:100%;padding:10px;margin:5px 0;border:none;border-radius:8px;box-sizing:border-box}
-button{width:100%;padding:12px;background:#FFD700;border:none;border-radius:10px;margin-top:5px}
-.progress{background:#333;height:20px;border-radius:10px;overflow:hidden}
-.bar{background:#FFD700;height:20px;width:0%}
-.timer{font-size:34px;text-align:center;color:#FFD700}
-.badge{display:inline-block;background:#333;padding:8px 12px;border-radius:20px;margin:4px}
-canvas{background:#fff;border-radius:10px;width:100%;max-width:100%}
-.footer{text-align:center;color:#ccc}
+body{background:linear-gradient(180deg,#06111f,#0a0f1f);color:white;font-family:Arial;padding:15px}
+.card{background:#111827;border-radius:20px;padding:15px;margin-bottom:15px;box-shadow:0 0 15px rgba(0,191,255,.2)}
+h1,h2{color:#00BFFF}
+input,select,textarea,button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:10px;box-sizing:border-box}
+button{background:#00BFFF;color:white;font-weight:bold}
+.exercise{background:#1b2435;padding:10px;border-radius:10px;margin:5px 0}
+.progress{height:16px;background:#333;border-radius:10px;overflow:hidden}
+.bar{height:16px;background:#00BFFF;width:0%}
 </style>
 </head>
 <body>
+<h1>💪 N Fitness 1.6 Ultimate</h1>
+<p>Powered by Nagaraj's IT Solution</p>
 
-<h1>🏆 Champions Fitness V7.1</h1>
-<p style="color:#FFD700;text-align:center;">
-Developed by Nagaraj's IT Solution
-</p>
+<div class="card"><h2>📅 Date & Time</h2><p id="clock"></p></div>
 
 <div class="card">
-<h2>🔥 Champion Dashboard</h2>
-<input id="weight" placeholder="Weight (kg)">
-<input id="waist" placeholder="Waist (inch)">
-<input id="shoulders" placeholder="Shoulders (inch)">
-<input id="xp" placeholder="XP Points">
-<button onclick="saveData()">Save Progress</button>
-<p id="level">Level 1 Champion</p>
+<h2>👤 Profile</h2>
+<input id="name" placeholder="Name">
+<input id="weight" placeholder="Weight">
+<input id="waist" placeholder="Waist">
+<input id="goalWeight" placeholder="Goal Weight">
 </div>
 
 <div class="card">
-<h2>💧 Water Tracker</h2>
-<input id="water" type="number" placeholder="Litres">
-<div class="progress"><div id="waterBar" class="bar"></div></div>
+<h2>🔥 Streak & XP</h2>
+<input id="streak" placeholder="Streak">
+<input id="xp" placeholder="XP">
 </div>
 
 <div class="card">
-<h2>🍗 Protein Tracker</h2>
-<input id="protein" type="number" placeholder="Protein (g)">
-<div class="progress"><div id="proteinBar" class="bar"></div></div>
+<h2>🍗 Nutrition</h2>
+Protein<input id="protein" type="number" oninput="bars()">
+<div class="progress"><div id="pbar" class="bar"></div></div>
+Water<input id="water" type="number" oninput="bars()">
+<div class="progress"><div id="wbar" class="bar"></div></div>
 </div>
 
 <div class="card">
-<h2>⏱ Smart Workout Timer</h2>
-<div class="timer" id="timer">00:00</div>
-<input id="seconds" type="number" value="60">
-<button onclick="startTimer()">Start Set</button>
-<button onclick="startRest()">90s Rest</button>
-<button onclick="stopTimer()">Stop</button>
+<h2>🏋 Workout Engine</h2>
+<select id="goal" onchange="generateWorkout()">
+<option>Muscle Gain</option>
+<option>Weight Loss</option>
+<option>Fat Loss</option>
+<option>Strength Gain</option>
+<option>Body Recomposition</option>
+</select>
+
+<select id="type" onchange="generateWorkout()">
+<option>Single Workout</option>
+<option>Double Workout</option>
+<option>Mixed Workout</option>
+</select>
+
+<select id="muscle" onchange="generateWorkout()">
+<option>Chest</option>
+<option>Back</option>
+<option>Shoulders</option>
+<option>Legs</option>
+<option>Arms</option>
+<option>Core</option>
+</select>
+
+<div id="workout"></div>
 </div>
 
 <div class="card">
-<h2>📈 Weight Progress Chart</h2>
-<canvas id="chart" width="300" height="150"></canvas>
-<button onclick="addWeight()">Add Weight Entry</button>
+<h2>✏️ Custom Workout Builder</h2>
+<input id="ex" placeholder="Exercise">
+<input id="sets" placeholder="Sets">
+<input id="reps" placeholder="Reps">
+<input id="restex" placeholder="Rest Seconds">
+<button onclick="addExercise()">Add Exercise</button>
+<textarea id="customPlan" rows="6"></textarea>
 </div>
 
 <div class="card">
-<h2>📸 Transformation Photos</h2>
-<input type="file" id="photo" accept="image/*">
-<img id="preview" style="max-width:100%;display:none;border-radius:10px;">
+<h2>⏱ Rest Timer</h2>
+<input id="rest" type="number" value="90">
+<button onclick="startTimer()">Start Timer</button>
+<h1 id="timer">00:00</h1>
 </div>
 
 <div class="card">
-<h2>🔥 Streak Tracker</h2>
-<p id="streakText">Current Streak: 0 Days</p>
-<button onclick="increaseStreak()">Workout Completed Today</button>
+<h2>📊 Workout Completion</h2>
+<input id="completed" placeholder="Completed Exercises">
+<input id="total" placeholder="Total Exercises">
+<button onclick="calcCompletion()">Calculate</button>
+<p id="completion">0% Complete</p>
 </div>
 
 <div class="card">
-<h2>🏅 Achievements</h2>
-<div class="badge">🔥 Consistency</div>
-<div class="badge">💪 Strength</div>
-<div class="badge">🦵 Leg Hero</div>
-<div class="badge">🏆 Champion</div>
-</div>
-
-<div class="card footer">
-<h2>💻 Nagaraj's IT Solution</h2>
-<p>Custom Software • Fitness Apps • Healthcare Innovation</p>
-<p>📧 nagarajpoojary@live.com</p>
-<p style="color:#FFD700;">Powered by Nagaraj's IT Solution</p>
+<h2>📱 WhatsApp Report</h2>
+<button onclick="makeReport()">Generate Report</button>
+<textarea id="report" rows="10"></textarea>
 </div>
 
 <script>
-let interval;
-function updateBars(){
-waterBar.style.width=Math.min((water.value||0)/4*100,100)+'%';
-proteinBar.style.width=Math.min((protein.value||0)/150*100,100)+'%';
-level.innerText='Level '+(Math.floor((xp.value||0)/1000)+1)+' Champion';
+setInterval(()=>clock.innerText=new Date().toLocaleString(),1000);
+
+function bars(){
+pbar.style.width=Math.min((protein.value||0)/150*100,100)+'%';
+wbar.style.width=Math.min((water.value||0)/4*100,100)+'%';
 }
-document.addEventListener('input',updateBars);
-function beep(){
-try{
-const c=new(window.AudioContext||window.webkitAudioContext)();
-const o=c.createOscillator();o.connect(c.destination);o.start();
-setTimeout(()=>o.stop(),700);
-if(navigator.vibrate) navigator.vibrate([300,200,300]);
-}catch(e){}
+
+function generateWorkout(){
+let goal=document.getElementById('goal').value;
+let type=document.getElementById('type').value;
+let muscle=document.getElementById('muscle').value;
+let html='';
+
+const plans={
+"Chest":{"Muscle Gain":["Bench Press 4x10","Incline Press 4x10","Cable Fly 3x15"],
+"Strength Gain":["Bench Press 5x5","Incline Press 5x5","Weighted Dips 4x6"]},
+"Back":{"Muscle Gain":["Pull Ups 4 Sets","Lat Pulldown 4x10","Deadlift 3x5"]},
+"Shoulders":{"Muscle Gain":["Shoulder Press 4x10","Lateral Raise 4x12","Face Pull 3x15"]},
+"Legs":{"Muscle Gain":["Squat 4x8","Leg Press 4x12","Calf Raise 4x20"]},
+"Arms":{"Muscle Gain":["Barbell Curl 4x10","Hammer Curl 3x12","Pushdown 3x12"]},
+"Core":{"Muscle Gain":["Plank 3x60 sec","Crunches 3x20","Leg Raises 3x15"]}
+};
+
+let ex=(plans[muscle]&&plans[muscle][goal])||["General Workout","3 Sets"];
+
+if(type==="Single Workout"){
+html+="<div class='exercise'><b>Single Session</b></div>";
 }
-function run(sec){
-clearInterval(interval);
-interval=setInterval(()=>{
-let m=Math.floor(sec/60),s=sec%60;
-timer.innerText=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-sec--;
-if(sec<0){clearInterval(interval);beep();alert('⏰ Resume Workout!');}
+if(type==="Double Workout"){
+html+="<div class='exercise'><b>Morning Session</b></div>";
+}
+if(type==="Mixed Workout"){
+html+="<div class='exercise'><b>"+muscle+" + Secondary Muscle</b></div>";
+}
+
+ex.forEach(e=>html+="<div class='exercise'>"+e+"</div>");
+
+if(type==="Double Workout"){
+html+="<div class='exercise'><b>Evening Session</b><br>Cardio + Mobility + Stretching</div>";
+}
+if(type==="Mixed Workout"){
+html+="<div class='exercise'>Core Conditioning 3x15</div>";
+}
+
+html+="<div class='exercise'>Rest: 90 sec | Duration: 60-75 min</div>";
+document.getElementById('workout').innerHTML=html;
+}
+generateWorkout();
+
+let custom=[];
+function addExercise(){
+custom.push(ex.value+" | "+sets.value+" Sets | "+reps.value+" Reps | Rest "+restex.value+" sec");
+customPlan.value=custom.join("\n");
+}
+
+let intv;
+function startTimer(){
+let s=parseInt(rest.value)||90;
+clearInterval(intv);
+intv=setInterval(()=>{
+timer.innerText=String(Math.floor(s/60)).padStart(2,'0')+":"+String(s%60).padStart(2,'0');
+s--;
+if(s<0){
+clearInterval(intv);
+if(navigator.vibrate) navigator.vibrate([500,300,500]);
+alert("🔥 REST COMPLETE - START NEXT SET");
+}
 },1000);
 }
-function startTimer(){run(parseInt(seconds.value)||60);}
-function startRest(){run(90);}
-function stopTimer(){clearInterval(interval);}
-function saveData(){
-localStorage.setItem('CFV71',JSON.stringify({
-weight:weight.value,waist:waist.value,shoulders:shoulders.value,xp:xp.value,water:water.value,protein:protein.value
-}));
-alert('Saved');
+
+function calcCompletion(){
+let c=Number(completed.value||0), t=Number(total.value||1);
+completion.innerText=Math.round((c/t)*100)+"% Complete";
 }
-window.onload=function(){
-let d=JSON.parse(localStorage.getItem('CFV71')||'{}');
-for(let k in d){if(document.getElementById(k)) document.getElementById(k).value=d[k];}
-updateBars();
+
+function makeReport(){
+report.value="🏆 N Fitness Report\nName: "+name.value+"\nGoal: "+goal.value+"\nWorkout Type: "+type.value+"\nMuscle: "+muscle.value+"\nWeight: "+weight.value+"\nWaist: "+waist.value+"\nStreak: "+streak.value;
+}
+
+function save(){
+let data={};
+document.querySelectorAll('input,select,textarea').forEach(e=>data[e.id]=e.value);
+localStorage.setItem('nfitness16',JSON.stringify(data));
+}
+document.addEventListener('change',save);
+window.onload=()=>{
+let d=JSON.parse(localStorage.getItem('nfitness16')||'{}');
+Object.keys(d).forEach(k=>{let e=document.getElementById(k); if(e)e.value=d[k];});
+bars(); generateWorkout();
 }
 </script>
-
 </body>
 </html>
