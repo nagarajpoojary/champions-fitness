@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>N Fitness 1.6 Ultimate</title>
+<style>
+body{background:linear-gradient(180deg,#06111f,#0a0f1f);color:white;font-family:Arial;padding:15px}
+.card{background:#111827;border-radius:20px;padding:15px;margin-bottom:15px;box-shadow:0 0 15px rgba(0,191,255,.2)}
+h1,h2{color:#00BFFF}
+input,select,textarea,button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:10px;box-sizing:border-box}
+button{background:#00BFFF;color:white;font-weight:bold}
+.exercise{background:#1b2435;padding:10px;border-radius:10px;margin:5px 0}
+.progress{height:16px;background:#333;border-radius:10px;overflow:hidden}
+.bar{height:16px;background:#00BFFF;width:0%}
+</style>
+</head>
+<body>
+<h1>💪 N Fitness 1.6 Ultimate</h1>
+<p>Powered by Nagaraj's IT Solution</p>
+
+<div class="card"><h2>📅 Date & Time</h2><p id="clock"></p></div>
+
+<div class="card">
+<h2>👤 Profile</h2>
+<input id="name" placeholder="Name">
+<input id="weight" placeholder="Weight">
+<input id="waist" placeholder="Waist">
+<input id="goalWeight" placeholder="Goal Weight">
+</div>
+
+<div class="card">
+<h2>🔥 Streak & XP</h2>
+<input id="streak" placeholder="Streak">
+<input id="xp" placeholder="XP">
+</div>
+
+<div class="card">
+<h2>🍗 Nutrition</h2>
+Protein<input id="protein" type="number" oninput="bars()">
+<div class="progress"><div id="pbar" class="bar"></div></div>
+Water<input id="water" type="number" oninput="bars()">
+<div class="progress"><div id="wbar" class="bar"></div></div>
+</div>
+
+<div class="card">
+<h2>🏋 Workout Engine</h2>
+<select id="goal" onchange="generateWorkout()">
+<option>Muscle Gain</option>
+<option>Weight Loss</option>
+<option>Fat Loss</option>
+<option>Strength Gain</option>
+<option>Body Recomposition</option>
+</select>
+
+<select id="type" onchange="generateWorkout()">
+<option>Single Workout</option>
+<option>Double Workout</option>
+<option>Mixed Workout</option>
+</select>
+
+<select id="muscle" onchange="generateWorkout()">
+<option>Chest</option>
+<option>Back</option>
+<option>Shoulders</option>
+<option>Legs</option>
+<option>Arms</option>
+<option>Core</option>
+</select>
+
+<div id="workout"></div>
+</div>
+
+<div class="card">
+<h2>✏️ Custom Workout Builder</h2>
+<input id="ex" placeholder="Exercise">
+<input id="sets" placeholder="Sets">
+<input id="reps" placeholder="Reps">
+<input id="restex" placeholder="Rest Seconds">
+<button onclick="addExercise()">Add Exercise</button>
+<textarea id="customPlan" rows="6"></textarea>
+</div>
+
+<div class="card">
+<h2>⏱ Rest Timer</h2>
+<input id="rest" type="number" value="90">
+<button onclick="startTimer()">Start Timer</button>
+<h1 id="timer">00:00</h1>
+</div>
+
+<div class="card">
+<h2>📊 Workout Completion</h2>
+<input id="completed" placeholder="Completed Exercises">
+<input id="total" placeholder="Total Exercises">
+<button onclick="calcCompletion()">Calculate</button>
+<p id="completion">0% Complete</p>
+</div>
+
+
+<div class="card">
+<h2>🚀 N Pro Workout Timer Premium</h2>
+<input id="proWork" type="number" value="45" placeholder="Workout Seconds">
+<input id="proRest" type="number" value="60" placeholder="Rest Seconds">
+<input id="proSets" type="number" value="3" placeholder="Total Sets">
+<button onclick="startProTimer()">▶ Start Workout</button>
+<button onclick="pauseProTimer()">⏸ Pause</button>
+<button onclick="resumeProTimer()">▶ Resume</button>
+<h1 id="proTimer">00:45</h1>
+<p id="proPhase">Ready</p>
+<p id="proSetInfo">Set 0 / 3</p>
+</div>
+
+<div class="card">
+<h2>⚖️ BMI Calculator</h2>
+<input id="heightCm" placeholder="Height (cm)">
+<input id="weightKg" placeholder="Weight (kg)">
+<button onclick="calcBMI()">Calculate BMI</button>
+<p id="bmiResult"></p>
+</div>
+
+<div class="card">
+<h2>🔥 Calories Burned Estimator</h2>
+<input id="minutesWorkout" placeholder="Workout Minutes">
+<button onclick="calcCalories()">Estimate Calories</button>
+<p id="calorieResult"></p>
+</div>
+
+<div class="card">
+<h2>📱 WhatsApp Report</h2>
+<button onclick="makeReport()">Generate Report</button>
+<textarea id="report" rows="10"></textarea>
+</div>
+
+<script>
+setInterval(()=>clock.innerText=new Date().toLocaleString(),1000);
+
+function bars(){
+pbar.style.width=Math.min((protein.value||0)/150*100,100)+'%';
+wbar.style.width=Math.min((water.value||0)/4*100,100)+'%';
+}
+
+function generateWorkout(){
+let goal=document.getElementById('goal').value;
+let type=document.getElementById('type').value;
+let muscle=document.getElementById('muscle').value;
+let html='';
+
+const plans={
+"Chest":{"Muscle Gain":["Bench Press 4x10","Incline Press 4x10","Cable Fly 3x15"],
+"Strength Gain":["Bench Press 5x5","Incline Press 5x5","Weighted Dips 4x6"]},
+"Back":{"Muscle Gain":["Pull Ups 4 Sets","Lat Pulldown 4x10","Deadlift 3x5"]},
+"Shoulders":{"Muscle Gain":["Shoulder Press 4x10","Lateral Raise 4x12","Face Pull 3x15"]},
+"Legs":{"Muscle Gain":["Squat 4x8","Leg Press 4x12","Calf Raise 4x20"]},
+"Arms":{"Muscle Gain":["Barbell Curl 4x10","Hammer Curl 3x12","Pushdown 3x12"]},
+"Core":{"Muscle Gain":["Plank 3x60 sec","Crunches 3x20","Leg Raises 3x15"]}
+};
+
+let ex=(plans[muscle]&&plans[muscle][goal])||["General Workout","3 Sets"];
+
+if(type==="Single Workout"){
+html+="<div class='exercise'><b>Single Session</b></div>";
+}
+if(type==="Double Workout"){
+html+="<div class='exercise'><b>Morning Session</b></div>";
+}
+if(type==="Mixed Workout"){
+html+="<div class='exercise'><b>"+muscle+" + Secondary Muscle</b></div>";
+}
+
+ex.forEach(e=>html+="<div class='exercise'>"+e+"</div>");
+
+if(type==="Double Workout"){
+html+="<div class='exercise'><b>Evening Session</b><br>Cardio + Mobility + Stretching</div>";
+}
+if(type==="Mixed Workout"){
+html+="<div class='exercise'>Core Conditioning 3x15</div>";
+}
+
+html+="<div class='exercise'>Rest: 90 sec | Duration: 60-75 min</div>";
+document.getElementById('workout').innerHTML=html;
+}
+generateWorkout();
+
+let custom=[];
+function addExercise(){
+custom.push(ex.value+" | "+sets.value+" Sets | "+reps.value+" Reps | Rest "+restex.value+" sec");
+customPlan.value=custom.join("\n");
+}
+
+let intv;
+function startTimer(){
+let s=parseInt(rest.value)||90;
+clearInterval(intv);
+intv=setInterval(()=>{
+timer.innerText=String(Math.floor(s/60)).padStart(2,'0')+":"+String(s%60).padStart(2,'0');
+s--;
+if(s<0){
+clearInterval(intv);
+if(navigator.vibrate) navigator.vibrate([500,300,500]);
+alert("🔥 REST COMPLETE - START NEXT SET");
+}
+},1000);
+}
+
+function calcCompletion(){
+let c=Number(completed.value||0), t=Number(total.value||1);
+completion.innerText=Math.round((c/t)*100)+"% Complete";
+}
+
+function makeReport(){
+report.value="🏆 N Fitness Report\nName: "+name.value+"\nGoal: "+goal.value+"\nWorkout Type: "+type.value+"\nMuscle: "+muscle.value+"\nWeight: "+weight.value+"\nWaist: "+waist.value+"\nStreak: "+streak.value;
+}
+
+function save(){
+let data={};
+document.querySelectorAll('input,select,textarea').forEach(e=>data[e.id]=e.value);
+localStorage.setItem('nfitness16',JSON.stringify(data));
+}
+document.addEventListener('change',save);
+window.onload=()=>{
+let d=JSON.parse(localStorage.getItem('nfitness16')||'{}');
+Object.keys(d).forEach(k=>{let e=document.getElementById(k); if(e)e.value=d[k];});
+bars(); generateWorkout();
+}
+
+let proIntv,proCurrent=45,proWork=45,proRest=60,proTotal=3,proSet=1,proRunning=false,proWorkout=true;
+function proDisplay(){
+proTimer.innerText=String(Math.floor(proCurrent/60)).padStart(2,'0')+":"+String(proCurrent%60).padStart(2,'0');
+proSetInfo.innerText='Set '+proSet+' / '+proTotal;
+}
+function startProTimer(){
+proWork=parseInt(proWork.value||45);
+proRest=parseInt(proRest.value||60);
+proTotal=parseInt(proSets.value||3);
+proCurrent=proWork;proSet=1;proWorkout=true;
+proPhase.innerText='Workout';
+clearInterval(proIntv);
+runPro();
+}
+function runPro(){
+proRunning=true;
+proDisplay();
+proIntv=setInterval(()=>{
+proCurrent--;
+proDisplay();
+if(proCurrent<0){
+if(navigator.vibrate) navigator.vibrate(300);
+if(proWorkout){proWorkout=false;proCurrent=proRest;proPhase.innerText='Rest';}
+else{
+proSet++;
+if(proSet>proTotal){clearInterval(proIntv);proPhase.innerText='Workout Complete';return;}
+proWorkout=true;proCurrent=proWork;proPhase.innerText='Workout';
+}
+}
+},1000);
+}
+function pauseProTimer(){clearInterval(proIntv);proRunning=false;}
+function resumeProTimer(){if(!proRunning) runPro();}
+
+function calcBMI(){
+let h=(parseFloat(heightCm.value)||0)/100;
+let w=parseFloat(weightKg.value)||0;
+if(h>0) bmiResult.innerText='BMI: '+(w/(h*h)).toFixed(1);
+}
+function calcCalories(){
+let m=parseFloat(minutesWorkout.value)||0;
+calorieResult.innerText='Estimated Calories: '+Math.round(m*8);
+}
+
+</script>
+</body>
+</html>
